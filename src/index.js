@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const db = require('./db/db');
+const db = require('../db/db');
 app.use(express.json());
 /*
 const pg = require("pg");
