@@ -1,6 +1,5 @@
 const db = require('../../../db/db');
 
-
 const getAllEntries = async () => {
     return await db("myFirstTable").select('*');
 };

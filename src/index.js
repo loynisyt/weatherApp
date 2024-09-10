@@ -1,9 +1,12 @@
 const express = require('express');
-const app = express();
 const entryController = require('./modules/entries/entryController');
+
+const PORT = process.env.PORT || 3000;
+
+const app = express();
+
 app.use(express.json());
 app.use('/entries', entryController);
-const PORT = process.env.PORT || 3000;
 
 
 app.listen(PORT, () => {
