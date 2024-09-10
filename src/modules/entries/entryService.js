@@ -37,5 +37,5 @@ module.exports = {
     createEntry,
     deleteEntry,
     updateEntry,
-    getLastUpdatedEntry
+    getLastUpdatedEntry,
 };
