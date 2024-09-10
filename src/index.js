@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use('/entries', entryController);
 
-app.use('/api/users', userController);
+app.use('/users', userController);
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
