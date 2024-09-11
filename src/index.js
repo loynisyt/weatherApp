@@ -11,6 +11,7 @@ app.use('/entries', entryController);
 
 app.use('/users', userController);
 
+
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
 });
