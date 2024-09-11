@@ -12,7 +12,7 @@ router.post('/create', async (req, res) => {
     try {
         const userId = await userService.createUser(firstName, lastName, login, password);
         const token = await userService.loginUser(login, password);
-        res.status(201).json({ message: 'User created successfully', token });
+        res.status(201).json({ message: 'User created successfully', firstName, lastName });
     } catch (err) {
         res.status(500).json({ message: 'Error creating user' });
     }
