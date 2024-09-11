@@ -12,7 +12,7 @@ router.post('/create', async (req, res) => {
     try {
         const userId = await userService.createUser(firstName, lastName, login, password);
         const token = await userService.loginUser(login, password);
-        res.status(201).json({ message: 'User created successfully', firstName, lastName });
+        res.status(201).json({ message: 'User created successfully. Log in to see your token', firstName, lastName });
     } catch (err) {
         res.status(500).json({ message: 'Error creating user' });
     }
@@ -26,5 +26,19 @@ router.post('/login', async (req, res) => {
         res.status(401).json({ message: 'Invalid login or password' });
     }
 });
+
+router.post('/validate-token', async(req, res)=>{
+    const { token } = req.body
+    try{
+        const isValid = await userService.validateToken(token);
+    if (isValid) {
+            res.status(200).json({message: 'Token is valid'})
+    }else{
+            res.status(401).json({message: 'Token is invalid'})
+    }
+    }catch(error){
+        res.status(500).json({message: 'Error validating token '})
+    }
+})
 
 module.exports = router;

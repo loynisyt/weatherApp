@@ -66,5 +66,25 @@ async function createSession(userId) {
   }
 }
 
+async function validateToken(token){
+  try{
+  const session = await db('sessions').where({token}).first();
 
-module.exports = { createUser, loginUser, createSession,};
+  if (!session){
+    return false;
+  }
+  const now = new Date();
+
+  if (now>session.expires_at){
+    return false;
+  }
+  return true;
+
+  }catch(error){
+    console.error('Error token validating:', error);
+    throw new Error('Error token validating');
+}
+}
+
+
+module.exports = { createUser, loginUser, createSession, validateToken};
