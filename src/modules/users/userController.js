@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/validate-token', async(req, res)=>{
-    const { token } = req.body
+    const [ , token] = req.headers.authorization.split(' ')
     try{
         const isValid = await userService.validateToken(token);
     if (isValid) {
