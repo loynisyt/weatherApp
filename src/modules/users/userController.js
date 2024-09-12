@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userService = require('./userService');
 
+const isAuthorizedMiddleware = userService.isAuthorizedMiddleware;
 
 router.post('/create', async (req, res) => {
     const { firstName, lastName, login, password } = req.body;
@@ -27,18 +28,32 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/validate-token', async(req, res)=>{
-    const [ , token] = req.headers.authorization.split(' ')
-    try{
-        const isValid = await userService.validateToken(token);
-    if (isValid) {
-            res.status(200).json({message: 'Token is valid'})
-    }else{
-            res.status(401).json({message: 'Token is invalid'})
-    }
-    }catch(error){
-        res.status(500).json({message: 'Error validating token '})
-    }
-})
+router.put('/update', isAuthorizedMiddleware, async (req, res) => {
+    const { firstName, lastName, login } = req.body;
+    const userId = req.userId;
 
-module.exports = router;
+    try {
+        await userService.updateUser(userId, firstName, lastName, login);
+        res.status(200).json({ message: 'User updated successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error updating user' });
+    }
+});
+
+
+router.delete('/delete', isAuthorizedMiddleware, async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        await userService.deleteUser(userId);
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting user' });
+    }
+});
+
+
+
+
+
+module.exports = router ;

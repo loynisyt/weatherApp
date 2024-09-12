@@ -65,26 +65,55 @@ async function createSession(userId) {
     throw new Error('Error creating session');
   }
 }
-
-async function validateToken(token){
-  try{
-  const session = await db('sessions').where({token}).first();
-
-  if (!session){
-    return false;
+async function updateUser(id, firstName, lastName, login) {
+  try {
+      await db('users').where({ id }).update({
+          firstname: firstName,
+          lastname: lastName,
+          login: login,
+          updated_at: new Date()
+      });
+  } catch (error) {
+      console.error('Error updating user:', error);
+      throw new Error('Error updating user');
   }
-  const now = new Date();
-
-  if (now>session.expires_at){
-    return false;
-  }
-  return true;
-
-  }catch(error){
-    console.error('Error token validating:', error);
-    throw new Error('Error token validating');
-}
 }
 
+async function deleteUser(id) {
+  try {
+      await db('users').where({ id }).del();
+  } catch (error) {
+      console.error('Error deleting user:', error);
+      throw new Error('Error deleting user');
+  }
+}
 
-module.exports = { createUser, loginUser, createSession, validateToken};
+
+async function isAuthorizedMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const session = await db('sessions').where({ token }).first();
+
+    if (!session) {
+      return res.status(401).json({ message: 'Token is invalid' });
+    }
+    const now = new Date();
+    if (now > session.expires_at) {
+      return res.status(401).json({ message: 'Token has expired' });
+    }
+
+      req.userId = session.user_id;
+      next();
+
+  } catch (error) {
+    console.error('Error validating token:', error);
+    return res.status(500).json({ message: 'Error validating token' });
+  }
+}
+
+module.exports = { createUser, loginUser, createSession, updateUser, deleteUser, isAuthorizedMiddleware};
